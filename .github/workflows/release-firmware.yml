@@ -44,7 +44,7 @@ jobs:
           cp "$b/robot_rostro.ino.bootloader.bin" "salida/kids-robot-v$v.bootloader.bin"
           cp "$b/robot_rostro.ino.partitions.bin" "salida/kids-robot-v$v.partitions.bin"
           (cd salida && sha256sum * > SHA256SUMS)
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: firmware
           path: salida/
