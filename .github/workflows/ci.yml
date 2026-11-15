@@ -18,14 +18,14 @@ jobs:
     name: Sin secretos ni datos
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: bash tools/revisar_secretos.sh
 
   servidor:
     name: Servidor (pruebas)
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -53,7 +53,7 @@ jobs:
     name: Firmware (lógica en el PC)
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Pruebas de redes Wi-Fi
         working-directory: firmware/pruebas_pc
         run: |
@@ -64,7 +64,7 @@ jobs:
     name: Firmware (compila)
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/arduino
       - name: Compilar con las plantillas de configuración (sin secretos)
         run: bash firmware/robot_rostro/publicar.sh compilar
