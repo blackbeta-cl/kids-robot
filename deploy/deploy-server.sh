@@ -49,16 +49,17 @@ done
 
 restaurar() {
   echo "!! Falló: vuelvo a la versión anterior ($RESP)"
-  cp -a "$RESP"/*.py . 2>/dev/null || true
-  if [ -d "$RESP/padres_web" ]; then rm -rf padres_web; cp -a "$RESP/padres_web" padres_web; fi
-  [ -f "$RESP/requirements.txt" ] && cp -a "$RESP/requirements.txt" requirements.txt
+  cp -f "$RESP"/*.py . 2>/dev/null || true
+  if [ -d "$RESP/padres_web" ]; then rm -rf padres_web; cp -r "$RESP/padres_web" padres_web; fi
+  [ -f "$RESP/requirements.txt" ] && cp -f "$RESP/requirements.txt" requirements.txt
   sudo -n systemctl restart "$SERVICIO" || true
 }
 trap restaurar ERR
 
-cp -a .deploy-incoming/*.py .
-rm -rf padres_web && cp -a .deploy-incoming/padres_web padres_web
-cp -a .deploy-incoming/requirements.txt requirements.txt
+# cp sin -a: los archivos pueden ser de otro usuario del grupo (no se pueden fijar sus fechas ni dueño)
+cp -f .deploy-incoming/*.py .
+rm -rf padres_web && cp -r .deploy-incoming/padres_web padres_web
+cp -f .deploy-incoming/requirements.txt requirements.txt
 rm -rf .deploy-incoming
 
 if [ ! -f "$RESP/requirements.txt" ] || ! cmp -s requirements.txt "$RESP/requirements.txt"; then
