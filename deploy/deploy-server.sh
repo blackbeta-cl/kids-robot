@@ -74,7 +74,9 @@ if sudo -n journalctl -u "$SERVICIO" --since "-30s" --no-pager 2>/dev/null | gre
   echo "El registro del servicio tiene un Traceback tras reiniciar" >&2
   false
 fi
-curl -fsS -o /dev/null --max-time 10 "http://127.0.0.1:${PUERTO_LOCAL:-8081}/"
+# 200 = abierto en local; 401/403 = la app responde pero exige token (PUENTE_EXIGIR_TOKEN): ambos prueban que arrancó.
+codigo="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "http://127.0.0.1:${PUERTO_LOCAL:-8081}/" || true)"
+case "$codigo" in 200|401|403) ;; *) echo "El servicio no responde bien (HTTP $codigo)" >&2; false ;; esac
 trap - ERR
 ls -1dt bak-deploy/* | tail -n +6 | xargs -r rm -rf
 echo "OK: $SERVICIO activo y respondiendo. Respaldo en $DEPLOY_PATH/$RESP"
