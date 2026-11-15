@@ -36,7 +36,7 @@ jobs:
       DEPLOY_SERVICE: ${{ vars.DEPLOY_SERVICE }}
       DEPLOY_VENV: ${{ vars.DEPLOY_VENV }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Comprobar configuración
         run: |
           for v in DEPLOY_HOST DEPLOY_USER DEPLOY_PATH; do
