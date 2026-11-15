@@ -1,0 +1,22 @@
+name: Preparar SSH
+description: Deja la llave de despliegue y el known_hosts del servidor (la huella se fija; no se acepta una desconocida).
+inputs:
+  llave:
+    description: Llave privada SSH de despliegue
+    required: true
+  known_hosts:
+    description: Línea(s) de known_hosts del servidor (ssh-keyscan verificado)
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        LLAVE: ${{ inputs.llave }}
+        KNOWN_HOSTS: ${{ inputs.known_hosts }}
+      run: |
+        install -m 700 -d ~/.ssh
+        umask 077
+        printf '%s\n' "$LLAVE" > ~/.ssh/deploy_key
+        printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+        echo "DEPLOY_SSH_KEY=$HOME/.ssh/deploy_key" >> "$GITHUB_ENV"

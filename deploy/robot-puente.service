@@ -1,0 +1,30 @@
+[Unit]
+Description=Kids Robot - servidor de voz (puente)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=robot
+Group=robot
+WorkingDirectory=/opt/kids-robot
+# server/.env se carga solo (entorno.py); EnvironmentFile hace que también lo vea systemd. El guion = opcional.
+EnvironmentFile=-/opt/kids-robot/.env
+Environment=HOST=127.0.0.1
+Environment=PUERTO=8081
+ExecStart=/opt/kids-robot/.venv/bin/python puente.py
+Restart=always
+RestartSec=3
+
+# Endurecimiento: el servicio solo escribe en su carpeta.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/kids-robot
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,105 @@
+name: Release de firmware
+
+# Se dispara al subir una etiqueta vX.Y.Z (la crea quien mantiene el proyecto, sobre un commit de main).
+#  1. Compila el firmware (sin secretos: plantillas de configuración).
+#  2. EL TRABAJO "publicar" ESPERA LA APROBACIÓN MANUAL del entorno "firmware-produccion". Solo tras aprobarlo:
+#       - firma el firmware con la clave privada del entorno (si existe),
+#       - crea la GitHub Release con los binarios (para que cualquiera los grabe a mano),
+#       - y, en el repositorio original, lo publica en el servidor para la OTA.
+# Antes de etiquetar: sube FIRMWARE_VERSION en firmware/robot_rostro/estado.h por Pull Request (el robot solo instala una versión MAYOR).
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: read
+
+jobs:
+  compilar:
+    name: Compilar
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: La etiqueta debe estar en main y coincidir con FIRMWARE_VERSION
+        id: v
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "::error::La etiqueta no apunta a un commit de main"; exit 1; }
+          version="$(bash firmware/robot_rostro/publicar.sh version)"
+          [ "v$version" = "$GITHUB_REF_NAME" ] || { echo "::error::Etiqueta $GITHUB_REF_NAME != FIRMWARE_VERSION v$version"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - uses: ./.github/actions/arduino
+      - name: Compilar
+        run: bash firmware/robot_rostro/publicar.sh compilar
+      - name: Reunir binarios
+        run: |
+          mkdir -p salida
+          b=firmware/robot_rostro/build
+          v=${{ steps.v.outputs.version }}
+          cp "$b/robot_rostro.ino.bin"            "salida/kids-robot-v$v.app.bin"
+          cp "$b/robot_rostro.ino.merged.bin"     "salida/kids-robot-v$v.merged.bin"
+          cp "$b/robot_rostro.ino.bootloader.bin" "salida/kids-robot-v$v.bootloader.bin"
+          cp "$b/robot_rostro.ino.partitions.bin" "salida/kids-robot-v$v.partitions.bin"
+          (cd salida && sha256sum * > SHA256SUMS)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: salida/
+          if-no-files-found: error
+
+  publicar:
+    name: Aprobar, firmar y publicar
+    needs: compilar
+    runs-on: ubuntu-24.04
+    environment: firmware-produccion      # <-- aquí se pide la aprobación manual
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.compilar.outputs.version }}
+      FIRMA_CLAVE: ${{ secrets.FIRMWARE_SIGNING_KEY }}
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+      DEPLOY_FIRMWARE_PATH: ${{ vars.DEPLOY_FIRMWARE_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: firmware
+          path: salida
+      - name: Firmar (si hay clave en el entorno)
+        id: firma
+        run: |
+          if [ -z "$FIRMA_CLAVE" ]; then
+            echo "::warning::Sin FIRMWARE_SIGNING_KEY: la release no incluirá version.json firmado ni se publicará por OTA"
+            echo "firmado=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          b=firmware/robot_rostro/build; mkdir -p "$b"
+          cp "salida/kids-robot-v$VERSION.app.bin" "$b/robot_rostro.ino.bin"
+          umask 077
+          printf '%s\n' "$FIRMA_CLAVE" > "$RUNNER_TEMP/firma.pem"
+          bash firmware/robot_rostro/publicar.sh firmar "$RUNNER_TEMP/firma.pem"
+          rm -f "$RUNNER_TEMP/firma.pem"
+          cp "$b/version.json" salida/version.json
+          echo "firmado=true" >> "$GITHUB_OUTPUT"
+      - name: Crear la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd salida && sha256sum $(ls | grep -v '^SHA256SUMS$') > SHA256SUMS)
+          gh release create "$GITHUB_REF_NAME" salida/* \
+            --title "Firmware v$VERSION" \
+            --generate-notes \
+            --notes "Grabar a mano: ver docs/firmware.md. \`merged.bin\` se graba en 0x0 con esptool; \`app.bin\` + \`version.json\` son para la OTA de un servidor. Verifica con \`SHA256SUMS\`."
+      - name: Preparar SSH (solo servidor del proyecto original)
+        uses: ./.github/actions/ssh
+        if: steps.firma.outputs.firmado == 'true' && github.repository == 'blackbeta-cl/kids-robot' && env.DEPLOY_HOST != '' && env.DEPLOY_FIRMWARE_PATH != ''
+        with:
+          llave: ${{ secrets.DEPLOY_SSH_KEY }}
+          known_hosts: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+      - name: Subir app.bin y version.json
+        if: steps.firma.outputs.firmado == 'true' && github.repository == 'blackbeta-cl/kids-robot' && env.DEPLOY_HOST != '' && env.DEPLOY_FIRMWARE_PATH != ''
+        run: bash deploy/deploy-firmware.sh

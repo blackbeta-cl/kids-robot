@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  secretos:
+    name: Sin secretos ni datos
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tools/revisar_secretos.sh
+
+  servidor:
+    name: Servidor (pruebas)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: server/requirements.txt
+      - name: Dependencias
+        working-directory: server
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y libsndfile1
+          pip install -r requirements.txt
+      - name: Pruebas
+        working-directory: server
+        env:
+          SERIAL_PORT: COM99      # las pruebas nunca abren un puerto serie real
+        run: |
+          fallos=0
+          for t in test_*.py; do
+            echo "::group::${t%.py}"
+            python -m unittest "${t%.py}" || fallos=1
+            echo "::endgroup::"
+          done
+          exit $fallos
+
+  firmware-logica:
+    name: Firmware (lógica en el PC)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pruebas de redes Wi-Fi
+        working-directory: firmware/pruebas_pc
+        run: |
+          g++ -std=c++17 -Wall -Wextra -o test_redes test_redes.cpp
+          ./test_redes
+
+  firmware-compilar:
+    name: Firmware (compila)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/arduino
+      - name: Compilar con las plantillas de configuración (sin secretos)
+        run: bash firmware/robot_rostro/publicar.sh compilar

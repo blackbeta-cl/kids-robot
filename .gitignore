@@ -1,0 +1,37 @@
+# ---------- Secretos y configuración local (NUNCA se suben) ----------
+.env
+.env.*
+!.env.example
+firmware/robot_rostro/wifi_config.h
+firmware/robot_rostro/voz_config.h
+*.pem
+*.key
+!firmware/robot_rostro/firma_publica.h
+
+# ---------- Datos de la familia y del niño (NUNCA se suben) ----------
+server/datos/
+datos/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+# Grabaciones de voz
+*.wav
+*.mp3
+firmware/robot_rostro/build/
+server/firmware/
+
+# ---------- Entorno y basura ----------
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.exe
+node_modules/
+Thumbs.db
+desktop.ini
+.DS_Store
+*.lnk
+*.bak*
+*.log

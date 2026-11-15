@@ -1,0 +1,71 @@
+# /etc/caddy/Caddyfile — HTTPS automático (Let's Encrypt) delante del servidor del robot.
+# Cambia robot.example.com por tu dominio (con un registro A/AAAA hacia la IP del servidor).
+# Solo se publican las rutas que el robot y el panel necesitan; todo lo demás responde 404.
+# Validar SIEMPRE como el usuario de Caddy:  sudo -u caddy caddy validate --config /etc/caddy/Caddyfile
+# (con "sudo caddy validate" se crea el archivo de registro con dueño root y Caddy no arranca).
+
+robot.example.com {
+	log {
+		output file /var/log/caddy/acceso.log {
+			roll_size 10mb
+			roll_keep 5
+		}
+		# Los secretos no se guardan en los registros.
+		format filter {
+			wrap json
+			fields {
+				request>headers>X-Token delete
+				request>headers>Cookie delete
+				request>headers>Authorization delete
+				resp_headers>Set-Cookie delete
+			}
+		}
+	}
+
+	# Voz del robot (streaming: flush inmediato) — exige X-Token (lo valida el servidor)
+	@voz path /voz /voz/stream
+	handle @voz {
+		request_body {
+			max_size 1MB
+		}
+		reverse_proxy 127.0.0.1:8081 {
+			flush_interval -1
+			transport http {
+				response_header_timeout 120s
+			}
+		}
+	}
+
+	# Actualizaciones de firmware (OTA) — exige X-Token
+	@firmware path /firmware/version /firmware/app.bin
+	handle @firmware {
+		reverse_proxy 127.0.0.1:8081
+	}
+
+	# Avisos de la agenda — exige X-Token
+	@pendientes path /pendientes /pendientes/*
+	handle @pendientes {
+		request_body {
+			max_size 16KB
+		}
+		reverse_proxy 127.0.0.1:8081 {
+			transport http {
+				response_header_timeout 60s
+			}
+		}
+	}
+
+	# Panel de padres (login propio con sesión)
+	@padres path /padres /padres/*
+	handle @padres {
+		request_body {
+			max_size 64KB
+		}
+		reverse_proxy 127.0.0.1:8081
+	}
+
+	# Todo lo demás (incluidos /docs y /openapi.json): no existe
+	handle {
+		respond 404
+	}
+}

@@ -1,0 +1,7 @@
+# Todo cambio requiere revisión de quien mantiene el proyecto. Lo que llega al servidor y a los robots, con más motivo.
+*                       @rumeau
+/.github/               @rumeau
+/deploy/                @rumeau
+/server/                @rumeau
+/firmware/              @rumeau
+/firmware/robot_rostro/firma_publica.h  @rumeau

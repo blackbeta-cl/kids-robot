@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<title>Panel de padres · Kids Robot</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header>
+  <h1>Kids Robot · padres</h1>
+  <button id="salir" class="enlace" hidden>Salir</button>
+</header>
+
+<main>
+  <section id="vista-entrar" hidden>
+    <form id="form-entrar" autocomplete="on">
+      <label>Usuario <input id="usuario" name="username" autocomplete="username" autocapitalize="none" required></label>
+      <label>Contraseña <input id="clave" name="password" type="password" autocomplete="current-password" required></label>
+      <button type="submit" class="primario">Entrar</button>
+    </form>
+  </section>
+
+  <section id="vista-panel" hidden>
+    <nav id="pestanas" role="tablist">
+      <button role="tab" data-v="pendientes" aria-selected="true">Por aprobar <span id="n-pend" class="contador" hidden></span></button>
+      <button role="tab" data-v="agenda" aria-selected="false">Agenda</button>
+      <button role="tab" data-v="sabe" aria-selected="false">Lo que sabe</button>
+      <button role="tab" data-v="perfil" aria-selected="false">Perfil</button>
+      <button role="tab" data-v="persona" aria-selected="false">Personalidad</button>
+    </nav>
+
+    <div id="v-agenda" class="vista" hidden>
+      <form id="form-ajustes">
+        <h2>Avisos del robot</h2>
+        <p class="ayuda">Hasta que configures el horario de silencio, el robot no avisa nada por su cuenta. El botón «Probar» funciona siempre.</p>
+        <div class="fila">
+          <label>Silencio desde <input id="a-desde" type="time"></label>
+          <label>hasta <input id="a-hasta" type="time"></label>
+        </div>
+        <label class="interruptor"><input id="a-activos" type="checkbox"> Avisos proactivos encendidos</label>
+        <label class="interruptor"><input id="a-alarma-silencio" type="checkbox"> Las alarmas suenan durante el silencio</label>
+        <button type="submit" class="primario">Guardar avisos</button>
+      </form>
+
+      <h2 id="titulo-evento">Nuevo evento</h2>
+      <form id="form-evento">
+        <label>Tipo
+          <select id="e-tipo">
+            <option value="recordatorio">Recordatorio</option>
+            <option value="alarma">Alarma</option>
+            <option value="rutina">Rutina</option>
+          </select>
+        </label>
+        <label>Qué <input id="e-titulo" maxlength="120" required placeholder="hacer la tarea"></label>
+        <label>Hora <input id="e-hora" type="time" required></label>
+        <fieldset>
+          <legend>Cuándo</legend>
+          <label>Un día <input id="e-fecha" type="date"></label>
+          <label class="interruptor"><input id="e-todos" type="checkbox"> Todos los días</label>
+          <div id="e-dias" class="dias" aria-label="Días de la semana"></div>
+          <p class="meta">Si eliges un día, se ignora la repetición. Si no, marca los días.</p>
+        </fieldset>
+        <div class="acciones">
+          <button type="submit" class="primario" id="e-guardar">Agregar evento</button>
+          <button type="button" id="e-cancelar" hidden>Cancelar edición</button>
+        </div>
+      </form>
+
+      <h2>Eventos</h2>
+      <ul id="lista-agenda" class="lista"></ul>
+      <h2>Últimos avisos</h2>
+      <ul id="lista-avisos" class="lista"></ul>
+    </div>
+
+    <div id="v-pendientes" class="vista">
+      <p class="ayuda">Lo que el robot cree haber aprendido. Nada llega al modelo hasta que lo apruebas.</p>
+      <ul id="lista-pendientes" class="lista"></ul>
+      <h2>Recuerdos compartidos propuestos</h2>
+      <ul id="lista-rasgos-pend" class="lista"></ul>
+    </div>
+
+    <div id="v-sabe" class="vista" hidden>
+      <form id="form-agregar" class="fila">
+        <input id="nuevo-hecho" maxlength="140" placeholder="Agregar algo que el robot deba saber" aria-label="Nuevo hecho">
+        <button type="submit" class="primario">Agregar</button>
+      </form>
+      <ul id="lista-aprobados" class="lista"></ul>
+      <h2>Recuerdos compartidos activos</h2>
+      <ul id="lista-rasgos-act" class="lista"></ul>
+    </div>
+
+    <div id="v-persona" class="vista" hidden>
+      <form id="form-persona">
+        <p class="ayuda">Cómo es y cómo habla el robot. Los cambios se aplican en la próxima frase, sin reiniciar nada. Las reglas de seguridad para niños no se pueden cambiar desde aquí. Los campos vacíos usan la personalidad de siempre.</p>
+        <label>Quién es <textarea id="p-identidad" rows="3" maxlength="300"></textarea></label>
+        <label>Cómo habla <textarea id="p-tono" rows="6" maxlength="600"></textarea></label>
+        <label>Reglas extra (una por línea, máximo 8) <textarea id="p-reglas" rows="5"></textarea></label>
+        <p id="p-origen" class="meta"></p>
+        <button type="submit" class="primario">Guardar personalidad</button>
+        <div class="acciones">
+          <button type="button" id="p-ejemplo">Rellenar con el ejemplo</button>
+          <button type="button" id="p-restablecer" class="mal">Volver a la de siempre</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="v-perfil" class="vista" hidden>
+      <form id="form-perfil">
+        <p class="ayuda">Solo un apodo y la fecha de nacimiento: al modelo llegan el apodo y la edad. Nada de apellidos, colegio, dirección ni teléfono. Los gustos son para ti; el robot solo usa los hechos que apruebes.</p>
+        <label>Apodo <input id="apodo" maxlength="30" autocomplete="off"></label>
+        <label>Nacimiento <input id="nacimiento" type="date"></label>
+        <label>Gustos (separados por coma) <input id="gustos" autocomplete="off"></label>
+        <button type="submit" class="primario">Guardar perfil</button>
+      </form>
+      <details>
+        <summary>Cambiar mi contraseña</summary>
+        <form id="form-clave">
+          <label>Contraseña actual <input id="clave-actual" type="password" autocomplete="current-password" required></label>
+          <label>Nueva (mínimo 10 caracteres) <input id="clave-nueva" type="password" autocomplete="new-password" minlength="10" required></label>
+          <button type="submit">Cambiar</button>
+        </form>
+      </details>
+    </div>
+  </section>
+</main>
+<div id="aviso" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>

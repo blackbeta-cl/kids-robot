@@ -1,0 +1,50 @@
+name: Desplegar servidor
+
+# Despliega server/ al servidor del PROYECTO ORIGINAL cuando algo se fusiona en main (por Pull Request aprobado).
+# En un fork no hace nada (no hay variables ni secretos); ver docs/ci-cd.md para montar el tuyo.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "deploy/deploy-server.sh"
+      - ".github/workflows/deploy-server.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-server
+  cancel-in-progress: false
+
+jobs:
+  pruebas:
+    uses: ./.github/workflows/ci.yml
+
+  desplegar:
+    name: Desplegar en producción
+    needs: pruebas
+    if: github.repository == 'blackbeta-cl/kids-robot' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment: produccion
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+      DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+      DEPLOY_SERVICE: ${{ vars.DEPLOY_SERVICE }}
+      DEPLOY_VENV: ${{ vars.DEPLOY_VENV }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar configuración
+        run: |
+          for v in DEPLOY_HOST DEPLOY_USER DEPLOY_PATH; do
+            [ -n "${!v}" ] || { echo "::error::Falta la variable $v del entorno 'produccion' (docs/ci-cd.md)"; exit 1; }
+          done
+      - uses: ./.github/actions/ssh
+        with:
+          llave: ${{ secrets.DEPLOY_SSH_KEY }}
+          known_hosts: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+      - name: Desplegar
+        run: bash deploy/deploy-server.sh
