@@ -110,6 +110,7 @@ uint32_t textoHasta = 0;
 bool hayTexto = false;
 
 void agendaAgregarEstado(JsonDocument& doc);   // lo implementa agenda.h, incluido más abajo
+void reposoDibujar(uint32_t t);                // lo implementa reposo.h (mosca y pelota encima de la cara)
 
 #include "estado.h"   // feedback en pantalla: arranque, Wi-Fi y OTA (usa las variables de arriba)
 #include "portal.h"       // portal cautivo para configurar el Wi-Fi (gesto de arranque, AP "Robot-XXXX", página)
@@ -378,6 +379,7 @@ void dibujarCara(const Cara& c, uint32_t t, float abreIn) {  // abreIn: 1 = ojos
     dibujarEfecto(*ef, c, t, ax, ay);
   }
 
+  reposoDibujar(t);      // mosca o pelota de la vida en reposo
   estSuperposicion(t);   // icono de Wi-Fi si no hay red
   pantalla.display();
 }
@@ -395,6 +397,8 @@ void avanzarServo(uint32_t ahora) {
   anguloActual += anguloObjetivo > anguloActual ? 1 : -1;
   cuello.write(anguloActual);
 }
+
+#include "reposo.h"   // vida en reposo: mira, juega, bosteza y se duerme cuando nadie le habla (usa Cara, cuello y emociones)
 
 // ---------- Comandos ----------
 
@@ -534,6 +538,7 @@ void procesarLinea(char* txt) {
     return;
   }
 
+  if (reposoComando(txt)) return;
   if (strncasecmp(txt, "cabeza", 6) == 0) { moverCabeza(atoi(txt + 6)); return; }
   if (strcasecmp(txt, "demo") == 0) { modoDemo = !modoDemo; proximoDemo = 0; Serial.println(modoDemo ? "Demo encendida" : "Demo apagada"); return; }
   if (strcasecmp(txt, "wifi") == 0) { mostrarWifi(); return; }
@@ -781,6 +786,7 @@ void loop() {
   actAtender(ahora);
   if (servidorIniciado) servidor.handleClient();
   avanzarServo(ahora);
+  reposoAtender(ahora);   // antes de atenderVoz: si la voz pide mover el cuello, gana la voz
   atenderVoz();
   agendaAtender(ahora);
 
@@ -795,6 +801,12 @@ void loop() {
     avanzarTransicion(ahora);
     if (actPantallaActiva()) actDibujar(ahora);   // cuenta regresiva o instalación: ocupan toda la pantalla
     else if (hayTexto && (int32_t)(textoHasta - ahora) > 0) dibujarTexto();
-    else { hayTexto = false; dibujarCara(actual, ahora, aperturaOjos(ahora)); }
+    else {
+      hayTexto = false;
+      Cara viva = actual;                       // la vida en reposo retoca una copia: la emoción de fondo no cambia
+      float abre = aperturaOjos(ahora);
+      reposoAplicar(viva, abre);
+      dibujarCara(viva, ahora, abre);
+    }
   }
 }
