@@ -1038,13 +1038,97 @@ def _cabecera_wav_stream(frecuencia):
             + b"data" + struct.pack("<I", 0xFFFFFFFF))
 
 
+# Caché de voz: el audio de una frase ya sintetizada se guarda en MEMORIA (nunca en disco), para que el saludo, las
+# respuestas fijas y las frases que se repiten no vuelvan a pasar por el TTS (1 a 1,5 s por frase, medidos).
+# Se vacía al reiniciar el servicio y está acotada en entradas y en bytes; la clave incluye los ajustes de voz.
+CACHE_VOZ_MAX_ENTRADAS = int(os.getenv("CACHE_VOZ_MAX_ENTRADAS", "200"))     # 0 = sin caché
+CACHE_VOZ_MAX_BYTES = int(os.getenv("CACHE_VOZ_MAX_MB", "40")) * 1024 * 1024
+CACHE_VOZ_MAX_FRASE = 160            # frases más largas casi nunca se repiten: no se guardan
+_cache_voz = {}                      # clave -> (pcm, frecuencia); el orden de inserción hace de LRU
+_cache_voz_bytes = [0]
+_cache_voz_lock = threading.Lock()
+_cache_voz_stats = {"aciertos": 0, "fallos": 0}
+
+
+def _cache_voz_clave(preparado):
+    return (preparado, VOZ_TTS, VOZ_TONO, VOZ_RITMO, VOZ_ROBOT)
+
+
+def _cache_voz_leer(clave):
+    with _cache_voz_lock:
+        hecho = _cache_voz.pop(clave, None)
+        if hecho is None:
+            _cache_voz_stats["fallos"] += 1
+            return None
+        _cache_voz[clave] = hecho                    # se reinserta al final: lo más usado se conserva
+        _cache_voz_stats["aciertos"] += 1
+        return hecho
+
+
+def _cache_voz_guardar(clave, hecho):
+    if CACHE_VOZ_MAX_ENTRADAS <= 0 or len(clave[0]) > CACHE_VOZ_MAX_FRASE:
+        return
+    with _cache_voz_lock:
+        anterior = _cache_voz.pop(clave, None)
+        if anterior is not None:
+            _cache_voz_bytes[0] -= len(anterior[0])
+        _cache_voz[clave] = hecho
+        _cache_voz_bytes[0] += len(hecho[0])
+        while _cache_voz and (len(_cache_voz) > CACHE_VOZ_MAX_ENTRADAS or _cache_voz_bytes[0] > CACHE_VOZ_MAX_BYTES):
+            viejo = _cache_voz.pop(next(iter(_cache_voz)))
+            _cache_voz_bytes[0] -= len(viejo[0])
+
+
 def _pcm_de_frase(frase):
     """Frase -> (PCM 16 bits mono, frecuencia) con la voz de siempre. None si no hay nada que decir."""
-    import numpy as np
-    import soundfile as sf
     preparado = preparar_para_voz(frase)
     if not preparado:
         return None
+    clave = _cache_voz_clave(preparado)
+    hecho = _cache_voz_leer(clave)
+    if hecho is None:
+        hecho = _sintetizar_pcm(preparado)
+        _cache_voz_guardar(clave, hecho)
+    return hecho
+
+
+# Frases que el robot dice con mucha frecuencia sin pasar por el modelo: se sintetizan al arrancar el servicio.
+FRASES_PRECALENTADAS = [
+    "¡Hola! Me alegra escucharte.",
+    "No te escuché bien. ¿Me lo repites?",
+    "Listo.",
+    "¡Listo, moví la cabeza!",
+    "Listo, ya lo olvidé.",
+    "Listo, ya olvidé eso.",
+    "No recuerdo nada de eso.",
+    "Voy a ver si hay una versión nueva.",
+    "Mmm, no se me ocurrió qué decir. ¿Me lo preguntas de otra forma?",
+    "Estoy un poco ocupado pensando. ¿Me lo preguntas en un momento?",
+    RESPUESTA_BLOQUEO,
+]
+
+
+def _precalentar_voz():
+    """Sintetiza en segundo plano las frases fijas (una a la vez; si el TTS falla, se sigue sin ellas)."""
+    for frase in FRASES_PRECALENTADAS:
+        try:
+            _pcm_de_frase(frase)
+        except Exception as error:
+            print(f"⚠️ Caché de voz: no pude precalentar una frase ({type(error).__name__}).", flush=True)
+            return
+    print(f"🔊 Caché de voz lista: {len(_cache_voz)} frase(s), {_cache_voz_bytes[0] // 1024} KB.", flush=True)
+
+
+@app.on_event("startup")
+def _al_arrancar_precalentar_voz():
+    if os.getenv("CACHE_VOZ_PRECALENTAR", "1") != "0" and CACHE_VOZ_MAX_ENTRADAS > 0:
+        threading.Thread(target=_precalentar_voz, name="precalentar-voz", daemon=True).start()
+
+
+def _sintetizar_pcm(preparado):
+    """Texto ya preparado -> (PCM 16 bits mono, frecuencia) con el TTS."""
+    import numpy as np
+    import soundfile as sf
     base = os.path.join(tempfile.gettempdir(), f"robot_voz_{uuid.uuid4().hex}")
     mp3, wav = base + ".mp3", base + ".wav"
     try:
