@@ -37,6 +37,7 @@
 #include "servidor_cfg.h"   // servidor y token (de voz_config.h / wifi_config.h o guardados en NVS)
 #include "microfono.h"     // captura del micrófono en su propia tarea (sin perder audio) y filtro pasa-altos
 #include "anuncio_ota.h"   // WAV del anuncio de OTA (generar_anuncio_ota.py)
+#include "rellenos.h"      // «a ver…», «veamos…», «pues…» (generar_rellenos.py)
 
 #define VOZ_PIN_TACTO 14
 #define VOZ_PIN_SCK 4
@@ -68,6 +69,7 @@
 #define VOZ_MS_DESCARTE_FINAL 100    // golpe de soltar
 #define VOZ_SEG_MAX 10
 #define VOZ_DESPLAZAR 5              // 24 bits -> 16 bits con ganancia x8 (>> 8 sería ganancia 1); las muestras llegan de microfono.h ya filtradas
+#define VOZ_RELLENO 1                // 1 = toca un «a ver…» al terminar de enviar el audio, mientras el servidor piensa (0 = silencio)
 #define VOZ_VOLUMEN_INICIAL 30       // % del WAV recibido. Se cambia con "vol N"
 #define VOZ_RESPUESTA_MAX_BYTES (2 * 1024 * 1024)   // ~43 s a 24 kHz mono 16 bits
 #define VOZ_STREAMING 1              // 1 = empieza a sonar con la primera frase (POST /voz/stream); 0 = baja todo y luego suena (POST /voz)
@@ -234,6 +236,18 @@ void vozReproducir(const uint8_t* bytes, size_t n) {
   memset(buf, 0, sizeof(buf));                           // silencio final: evita el "pop" y que se corte la cola
   for (uint32_t t = 0; t < w.tasa / 5; t += 256) vozParlante.write((uint8_t*)buf, sizeof(buf));
   vozParlante.end();
+}
+
+// Relleno: una interjección corta mientras el servidor transcribe y piensa. No baja la latencia real,
+// pero evita 2 a 5 s de silencio. Bloquea esta tarea ~0,5 s, que es lo que tarda en llegar la cabecera de la respuesta.
+void vozRellenar() {
+#if VOZ_RELLENO
+  static uint8_t ultimo = 255;
+  uint8_t i = esp_random() % RELLENOS_N;
+  if (i == ultimo) i = (i + 1) % RELLENOS_N;               // no repetir el mismo dos veces seguidas
+  ultimo = i;
+  vozReproducir((const uint8_t*)RELLENOS_WAV[i], RELLENOS_LEN[i]);
+#endif
 }
 
 // Anuncio de OTA por el parlante: tres beeps y «Actualizando en tres, dos, uno».
@@ -568,6 +582,7 @@ bool vozEnviarStream(uint32_t muestras) {
     p += w; restante -= w; ultimoEnvio = millis();
   }
   Serial.printf("  audio enviado en %lu ms\n", (unsigned long)(millis() - t));
+  vozRellenar();                                  // «a ver…» mientras el servidor transcribe y piensa
 
   int codigo = 0;
   String emocion, cuello, textoUrl;
