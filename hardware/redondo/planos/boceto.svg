@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="870" viewBox="0 0 1400 870">
+
+    <style>
+      text { font-family: 'Segoe UI', Arial, sans-serif; }
+      .titulo { font-size: 20px; font-weight: 700; fill: #333; letter-spacing: 2px; }
+      .titulo2 { font-size: 16px; font-weight: 700; fill: #333; }
+      .et { font-size: 12.5px; fill: #444; }
+      .cota { font-size: 12px; fill: #777; }
+      .guia { stroke: #999; stroke-width: 1; }
+      .punto { fill: #999; }
+      .base { fill: #6c7a89; stroke: #3b4652; stroke-width: 1.5; }
+      .cuerpo { fill: #ffd166; stroke: #b8860b; stroke-width: 2.5; }
+      .cabeza { fill: #fff3d6; stroke: #b8860b; stroke-width: 2.5; }
+      .corte { fill-opacity: 0.35; stroke-dasharray: 0; }
+      .rejilla { fill: #ffc233; stroke: #b8860b; stroke-width: 1.5; }
+      .hoyo { fill: #8a6200; }
+      .cuello { fill: #7bdff2; stroke: #2a8ca0; stroke-width: 1.5; }
+      .piso { fill: #f4a261; stroke: #b3602a; stroke-width: 1.5; }
+      .oreja { fill: #ef476f; stroke: #a32a4a; stroke-width: 1.5; }
+      .visor { fill: #2b2d42; stroke: #111; stroke-width: 1.5; }
+      .oled { fill: #10151f; stroke: #4cc9f0; stroke-width: 1; }
+      .ojo { fill: #4cc9f0; }
+      .boca { fill: none; stroke: #4cc9f0; stroke-width: 2; stroke-linecap: round; }
+      .mic { fill: #2b2d42; }
+      .mejilla { fill: #ef476f; opacity: 0.35; }
+      .boton { stroke: #ef476f; stroke-width: 5; stroke-linecap: round; opacity: 0.7; }
+      .esp { fill: #1d3557; stroke: #0b1a2e; }
+      .usb { fill: #adb5bd; stroke: #495057; }
+      .soporte { fill: #b0b8c1; stroke: #6c757d; }
+      .parl { fill: #495057; stroke: #212529; }
+      .servo { fill: #3a86ff; stroke: #1f4fa0; }
+      .sw { fill: #e63946; stroke: #8d1d26; }
+      .dedo { fill: #06d6a0; stroke: #04875f; }
+      .oledlado { fill: #10151f; stroke: #4cc9f0; }
+      .amp { fill: #8338ec; stroke: #4b1d8f; }
+      .pir { fill: #ffffff; stroke: #999; stroke-width: 1.5; }
+      .pirpcb { fill: #2a9d8f; stroke: #1d6f65; }
+      .lente { fill: #111; stroke: #555; stroke-width: 1.5; }
+      .cam { fill: #2d6a4f; stroke: #1b4332; }
+      .resorte { fill: none; stroke: #555; stroke-width: 1.5; }
+      .cable { fill: none; stroke: #e76f51; stroke-width: 2; stroke-dasharray: 5 3; }
+      .empuje { stroke: #ef476f; stroke-width: 4; marker-end: url(#punta); }
+    </style>
+    <defs><marker id="punta" markerWidth="8" markerHeight="8" refX="3" refY="4" orient="auto">
+      <path d="M0,0 L6,4 L0,8 Z" fill="#ef476f"/></marker></defs>
+    
+<rect width="1400" height="870" fill="#fffdf7"/>
+<text x="30" y="40" class="titulo2">Kids Robot · versión "redondo" · boceto v1</text>
+<text x="30" y="60" class="cota">Medidas en mm, sacadas de redondo/parametros.scad. La fuente de verdad es robot.scad.</text>
+<rect x="179.3" y="592.8" width="301.4" height="7.2" rx="2.4" class="base"/>
+<path d="M483.6,592.8 L483.6,589.1 L483.6,585.4 L483.5,581.6 L483.5,577.9 L483.4,574.2 L483.3,570.5 L483.2,566.8 L483.1,563.0 L483.0,559.3 L482.9,555.6 L482.7,551.9 L482.5,548.2 L482.3,544.4 L482.1,540.7 L481.8,537.0 L481.5,533.3 L481.2,529.6 L480.9,525.8 L480.5,522.1 L480.1,518.4 L479.7,514.7 L479.3,511.0 L478.8,507.2 L478.3,503.5 L477.7,499.8 L477.1,496.1 L476.5,492.4 L475.9,488.6 L475.2,484.9 L474.5,481.2 L473.7,477.5 L472.9,473.8 L472.0,470.0 L471.1,466.3 L470.2,462.6 L469.2,458.9 L468.1,455.2 L467.0,451.4 L465.8,447.7 L464.6,444.0 L463.3,440.3 L462.0,436.6 L460.6,432.8 L459.1,429.1 L457.5,425.4 L455.8,421.7 L454.1,418.0 L452.3,414.2 L450.3,410.5 L448.3,406.8 L446.1,403.1 L443.8,399.4 L441.4,395.6 L438.8,391.9 L436.1,388.2 L433.2,384.5 L430.0,380.8 L426.6,377.0 L422.9,373.3 L418.9,369.6 L241.1,369.6 L237.1,373.3 L233.4,377.0 L230.0,380.8 L226.8,384.5 L223.9,388.2 L221.2,391.9 L218.6,395.6 L216.2,399.4 L213.9,403.1 L211.7,406.8 L209.7,410.5 L207.7,414.2 L205.9,418.0 L204.2,421.7 L202.5,425.4 L200.9,429.1 L199.4,432.8 L198.0,436.6 L196.7,440.3 L195.4,444.0 L194.2,447.7 L193.0,451.4 L191.9,455.2 L190.8,458.9 L189.8,462.6 L188.9,466.3 L188.0,470.0 L187.1,473.8 L186.3,477.5 L185.5,481.2 L184.8,484.9 L184.1,488.6 L183.5,492.4 L182.9,496.1 L182.3,499.8 L181.7,503.5 L181.2,507.2 L180.7,511.0 L180.3,514.7 L179.9,518.4 L179.5,522.1 L179.1,525.8 L178.8,529.6 L178.5,533.3 L178.2,537.0 L177.9,540.7 L177.7,544.4 L177.5,548.2 L177.3,551.9 L177.1,555.6 L177.0,559.3 L176.9,563.0 L176.8,566.8 L176.7,570.5 L176.6,574.2 L176.5,577.9 L176.5,581.6 L176.4,585.4 L176.4,589.1 L176.4,592.8 Z" class="cuerpo"/>
+<circle cx="330.0" cy="520.8" r="50.4" class="rejilla"/>
+<circle cx="330.0" cy="520.8" r="3.6" class="hoyo"/>
+<circle cx="344.4" cy="520.8" r="3.6" class="hoyo"/>
+<circle cx="337.2" cy="508.3" r="3.6" class="hoyo"/>
+<circle cx="322.8" cy="508.3" r="3.6" class="hoyo"/>
+<circle cx="315.6" cy="520.8" r="3.6" class="hoyo"/>
+<circle cx="322.8" cy="533.3" r="3.6" class="hoyo"/>
+<circle cx="337.2" cy="533.3" r="3.6" class="hoyo"/>
+<circle cx="358.8" cy="520.8" r="3.6" class="hoyo"/>
+<circle cx="354.9" cy="506.4" r="3.6" class="hoyo"/>
+<circle cx="344.4" cy="495.9" r="3.6" class="hoyo"/>
+<circle cx="330.0" cy="492.0" r="3.6" class="hoyo"/>
+<circle cx="315.6" cy="495.9" r="3.6" class="hoyo"/>
+<circle cx="305.1" cy="506.4" r="3.6" class="hoyo"/>
+<circle cx="301.2" cy="520.8" r="3.6" class="hoyo"/>
+<circle cx="305.1" cy="535.2" r="3.6" class="hoyo"/>
+<circle cx="315.6" cy="545.7" r="3.6" class="hoyo"/>
+<circle cx="330.0" cy="549.6" r="3.6" class="hoyo"/>
+<circle cx="344.4" cy="545.7" r="3.6" class="hoyo"/>
+<circle cx="354.9" cy="535.2" r="3.6" class="hoyo"/>
+<circle cx="373.2" cy="520.8" r="3.6" class="hoyo"/>
+<circle cx="370.6" cy="506.0" r="3.6" class="hoyo"/>
+<circle cx="363.1" cy="493.0" r="3.6" class="hoyo"/>
+<circle cx="351.6" cy="483.4" r="3.6" class="hoyo"/>
+<circle cx="337.5" cy="478.3" r="3.6" class="hoyo"/>
+<circle cx="322.5" cy="478.3" r="3.6" class="hoyo"/>
+<circle cx="308.4" cy="483.4" r="3.6" class="hoyo"/>
+<circle cx="296.9" cy="493.0" r="3.6" class="hoyo"/>
+<circle cx="289.4" cy="506.0" r="3.6" class="hoyo"/>
+<circle cx="286.8" cy="520.8" r="3.6" class="hoyo"/>
+<circle cx="289.4" cy="535.6" r="3.6" class="hoyo"/>
+<circle cx="296.9" cy="548.6" r="3.6" class="hoyo"/>
+<circle cx="308.4" cy="558.2" r="3.6" class="hoyo"/>
+<circle cx="322.5" cy="563.3" r="3.6" class="hoyo"/>
+<circle cx="337.5" cy="563.3" r="3.6" class="hoyo"/>
+<circle cx="351.6" cy="558.2" r="3.6" class="hoyo"/>
+<circle cx="363.1" cy="548.6" r="3.6" class="hoyo"/>
+<circle cx="370.6" cy="535.6" r="3.6" class="hoyo"/>
+<rect x="267.6" y="336.0" width="124.8" height="33.6" rx="3.6" class="cuello"/>
+<rect x="234.7" y="324.0" width="190.6" height="7.2" rx="2.4" class="piso"/>
+<path d="M426.0,324.0 L428.3,321.6 L430.6,319.3 L432.8,316.9 L434.9,314.5 L436.9,312.2 L438.9,309.8 L440.8,307.4 L442.6,305.0 L444.4,302.7 L446.0,300.3 L447.6,297.9 L449.2,295.6 L450.6,293.2 L452.0,290.8 L453.3,288.4 L454.6,286.1 L455.7,283.7 L456.8,281.3 L457.8,279.0 L458.8,276.6 L459.6,274.2 L460.4,271.9 L461.2,269.5 L461.8,267.1 L462.4,264.8 L462.9,262.4 L463.3,260.0 L463.7,257.6 L463.7,255.3 L463.5,252.9 L463.3,250.5 L463.1,248.2 L462.9,245.8 L462.7,243.4 L462.4,241.1 L462.1,238.7 L461.8,236.3 L461.4,233.9 L461.1,231.6 L460.6,229.2 L460.2,226.8 L459.7,224.5 L459.2,222.1 L458.7,219.7 L458.1,217.4 L457.5,215.0 L456.9,212.6 L456.2,210.2 L455.5,207.9 L454.7,205.5 L453.9,203.1 L453.0,200.8 L452.1,198.4 L451.2,196.0 L450.1,193.7 L449.1,191.3 L447.9,188.9 L446.7,186.5 L445.4,184.2 L444.1,181.8 L442.7,179.4 L441.2,177.1 L439.6,174.7 L437.9,172.3 L436.1,169.9 L434.2,167.6 L432.2,165.2 L430.0,162.8 L427.7,160.5 L425.2,158.1 L422.6,155.7 L419.7,153.4 L416.6,151.0 L413.1,148.6 L409.4,146.2 L405.2,143.9 L400.5,141.5 L395.0,139.1 L388.5,136.8 L380.4,134.4 L279.6,134.4 L271.5,136.8 L265.0,139.1 L259.5,141.5 L254.8,143.9 L250.6,146.2 L246.9,148.6 L243.4,151.0 L240.3,153.4 L237.4,155.7 L234.8,158.1 L232.3,160.5 L230.0,162.8 L227.8,165.2 L225.8,167.6 L223.9,169.9 L222.1,172.3 L220.4,174.7 L218.8,177.1 L217.3,179.4 L215.9,181.8 L214.6,184.2 L213.3,186.5 L212.1,188.9 L210.9,191.3 L209.9,193.7 L208.8,196.0 L207.9,198.4 L207.0,200.8 L206.1,203.1 L205.3,205.5 L204.5,207.9 L203.8,210.2 L203.1,212.6 L202.5,215.0 L201.9,217.4 L201.3,219.7 L200.8,222.1 L200.3,224.5 L199.8,226.8 L199.4,229.2 L198.9,231.6 L198.6,233.9 L198.2,236.3 L197.9,238.7 L197.6,241.1 L197.3,243.4 L197.1,245.8 L196.9,248.2 L196.7,250.5 L196.5,252.9 L196.3,255.3 L196.3,257.6 L196.7,260.0 L197.1,262.4 L197.6,264.8 L198.2,267.1 L198.8,269.5 L199.6,271.9 L200.4,274.2 L201.2,276.6 L202.2,279.0 L203.2,281.3 L204.3,283.7 L205.4,286.1 L206.7,288.4 L208.0,290.8 L209.4,293.2 L210.8,295.6 L212.4,297.9 L214.0,300.3 L215.6,302.7 L217.4,305.0 L219.2,307.4 L221.1,309.8 L223.1,312.2 L225.1,314.5 L227.2,316.9 L229.4,319.3 L231.7,321.6 L234.0,324.0 Z" class="cabeza"/>
+<rect x="183.6" y="213.6" width="14.4" height="52.8" rx="7.2" class="oreja"/>
+<rect x="462.0" y="213.6" width="14.4" height="52.8" rx="7.2" class="oreja"/>
+<rect x="270.0" y="196.8" width="120.0" height="86.4" rx="16.8" class="visor"/>
+<circle cx="330.0" cy="417.6" r="27.6" class="pir"/>
+<circle cx="330.0" cy="208.8" r="12.0" class="lente"/>
+<circle cx="330.0" cy="208.8" r="3.8" class="ojo"/>
+<rect x="391.2" y="244.8" width="12.0" height="9.6" rx="2.4" class="mic"/>
+<rect x="300.6" y="234.0" width="58.8" height="31.2" rx="2.4" class="oled"/>
+<ellipse cx="316.8" cy="247.2" rx="5.8" ry="7.7" class="ojo"/>
+<ellipse cx="343.2" cy="247.2" rx="5.8" ry="7.7" class="ojo"/>
+<path d="M321.6,258.0 Q330.0,264.0 338.4,258.0" class="boca"/>
+<circle cx="262.8" cy="249.6" r="2.9" class="mic"/>
+<ellipse cx="248.4" cy="268.8" rx="14.4" ry="7.2" class="mejilla"/>
+<ellipse cx="411.6" cy="268.8" rx="14.4" ry="7.2" class="mejilla"/>
+<path d="M279.6,133.9 L380.4,133.9" class="boton"/>
+<line x1="162.0" y1="112.8" x2="296.4" y2="134.4" class="guia"/><circle cx="296.4" cy="134.4" r="2.2" class="punto"/>
+<text x="162.0" y="108.0" class="et" text-anchor="start">toda la cabeza es el botón</text>
+<line x1="498.0" y1="187.2" x2="387.6" y2="216.0" class="guia"/><circle cx="387.6" cy="216.0" r="2.2" class="punto"/>
+<text x="498.0" y="182.4" class="et" text-anchor="end">visor negro + OLED (cara)</text>
+<line x1="138.0" y1="292.8" x2="260.4" y2="252.0" class="guia"/><circle cx="260.4" cy="252.0" r="2.2" class="punto"/>
+<text x="138.0" y="302.4" class="et" text-anchor="start">micrófono</text>
+<line x1="522.0" y1="292.8" x2="402.0" y2="252.0" class="guia"/><circle cx="402.0" cy="252.0" r="2.2" class="punto"/>
+<text x="522.0" y="302.4" class="et" text-anchor="end">sensor de distancia IR</text>
+<line x1="522.0" y1="144.0" x2="342.0" y2="204.0" class="guia"/><circle cx="342.0" cy="204.0" r="2.2" class="punto"/>
+<text x="522.0" y="139.2" class="et" text-anchor="end">cámara ESP32-CAM</text>
+<line x1="517.2" y1="398.4" x2="356.4" y2="412.8" class="guia"/><circle cx="356.4" cy="412.8" r="2.2" class="punto"/>
+<text x="517.2" y="393.6" class="et" text-anchor="end">PIR: detecta movimiento</text>
+<line x1="138.0" y1="187.2" x2="190.8" y2="228.0" class="guia"/><circle cx="190.8" cy="228.0" r="2.2" class="punto"/>
+<text x="138.0" y="182.4" class="et" text-anchor="start">orejitas (otro color)</text>
+<line x1="138.0" y1="350.4" x2="282.0" y2="350.4" class="guia"/><circle cx="282.0" cy="350.4" r="2.2" class="punto"/>
+<text x="138.0" y="345.6" class="et" text-anchor="start">cuello: gira ±80°</text>
+<line x1="517.2" y1="504.0" x2="378.0" y2="513.6" class="guia"/><circle cx="378.0" cy="513.6" r="2.2" class="punto"/>
+<text x="517.2" y="499.2" class="et" text-anchor="end">barriga = parlante 50 mm</text>
+<text x="330.0" y="624.0" class="cota" text-anchor="middle">128 mm de ancho · 194 mm de alto</text>
+<text x="330.0" y="72.0" class="titulo" text-anchor="middle">FRENTE</text>
+<rect x="883.3" y="592.8" width="253.4" height="7.2" rx="2.4" class="base"/>
+<path d="M1139.6,592.8 L1139.6,589.1 L1139.6,585.4 L1139.5,581.6 L1139.5,577.9 L1139.4,574.2 L1139.4,570.5 L1139.3,566.8 L1139.2,563.0 L1139.1,559.3 L1139.0,555.6 L1138.8,551.9 L1138.7,548.2 L1138.5,544.4 L1138.3,540.7 L1138.1,537.0 L1137.8,533.3 L1137.6,529.6 L1137.3,525.8 L1137.0,522.1 L1136.7,518.4 L1136.3,514.7 L1135.9,511.0 L1135.5,507.2 L1135.1,503.5 L1134.6,499.8 L1134.2,496.1 L1133.6,492.4 L1133.1,488.6 L1132.5,484.9 L1131.9,481.2 L1131.2,477.5 L1130.5,473.8 L1129.8,470.0 L1129.1,466.3 L1128.3,462.6 L1127.4,458.9 L1126.5,455.2 L1125.6,451.4 L1124.6,447.7 L1123.6,444.0 L1122.5,440.3 L1121.4,436.6 L1120.2,432.8 L1118.9,429.1 L1117.6,425.4 L1116.2,421.7 L1114.7,418.0 L1113.2,414.2 L1111.5,410.5 L1109.8,406.8 L1108.0,403.1 L1106.0,399.4 L1104.0,395.6 L1101.8,391.9 L1099.5,388.2 L1097.0,384.5 L1094.4,380.8 L1091.5,377.0 L1088.4,373.3 L1085.0,369.6 L935.0,369.6 L931.6,373.3 L928.5,377.0 L925.6,380.8 L923.0,384.5 L920.5,388.2 L918.2,391.9 L916.0,395.6 L914.0,399.4 L912.0,403.1 L910.2,406.8 L908.5,410.5 L906.8,414.2 L905.3,418.0 L903.8,421.7 L902.4,425.4 L901.1,429.1 L899.8,432.8 L898.6,436.6 L897.5,440.3 L896.4,444.0 L895.4,447.7 L894.4,451.4 L893.5,455.2 L892.6,458.9 L891.7,462.6 L890.9,466.3 L890.2,470.0 L889.5,473.8 L888.8,477.5 L888.1,481.2 L887.5,484.9 L886.9,488.6 L886.4,492.4 L885.8,496.1 L885.4,499.8 L884.9,503.5 L884.5,507.2 L884.1,511.0 L883.7,514.7 L883.3,518.4 L883.0,522.1 L882.7,525.8 L882.4,529.6 L882.2,533.3 L881.9,537.0 L881.7,540.7 L881.5,544.4 L881.3,548.2 L881.2,551.9 L881.0,555.6 L880.9,559.3 L880.8,563.0 L880.7,566.8 L880.6,570.5 L880.6,574.2 L880.5,577.9 L880.5,581.6 L880.4,585.4 L880.4,589.1 L880.4,592.8 Z" class="cuerpo corte"/>
+<path d="M1091.6,324.0 L1093.9,321.6 L1096.2,319.3 L1098.3,316.9 L1100.4,314.5 L1102.3,312.2 L1104.2,309.8 L1106.0,307.4 L1107.7,305.0 L1109.3,302.7 L1110.8,300.3 L1110.8,297.9 L1110.8,295.6 L1110.8,293.2 L1110.8,290.8 L1110.8,288.4 L1110.8,286.1 L1110.8,283.7 L1110.8,281.3 L1110.8,279.0 L1110.8,276.6 L1110.8,274.2 L1110.8,271.9 L1110.8,269.5 L1110.8,267.1 L1110.8,264.8 L1110.8,262.4 L1110.8,260.0 L1110.8,257.6 L1110.8,255.3 L1110.8,252.9 L1110.8,250.5 L1110.8,248.2 L1110.8,245.8 L1110.8,243.4 L1110.8,241.1 L1110.8,238.7 L1110.8,236.3 L1110.8,233.9 L1110.8,231.6 L1110.8,229.2 L1110.8,226.8 L1110.8,224.5 L1110.8,222.1 L1110.8,219.7 L1110.8,217.4 L1110.8,215.0 L1110.8,212.6 L1110.8,210.2 L1110.8,207.9 L1110.8,205.5 L1110.8,203.1 L1110.8,200.8 L1110.8,198.4 L1110.8,196.0 L1110.8,193.7 L1109.9,191.3 L1109.0,188.9 L1108.0,186.5 L1106.9,184.2 L1105.8,181.8 L1104.6,179.4 L1103.3,177.1 L1102.0,174.7 L1100.5,172.3 L1099.0,169.9 L1097.4,167.6 L1095.7,165.2 L1093.9,162.8 L1092.0,160.5 L1089.9,158.1 L1087.7,155.7 L1085.3,153.4 L1082.6,151.0 L1079.8,148.6 L1076.6,146.2 L1073.1,143.9 L1069.1,141.5 L1064.6,139.1 L1059.1,136.8 L1052.3,134.4 L967.7,134.4 L960.9,136.8 L955.4,139.1 L950.9,141.5 L946.9,143.9 L943.4,146.2 L940.2,148.6 L937.4,151.0 L934.7,153.4 L932.3,155.7 L930.1,158.1 L928.0,160.5 L926.1,162.8 L924.3,165.2 L922.6,167.6 L921.0,169.9 L919.5,172.3 L918.0,174.7 L916.7,177.1 L915.4,179.4 L914.2,181.8 L913.1,184.2 L912.0,186.5 L911.0,188.9 L910.1,191.3 L909.2,193.7 L908.3,196.0 L907.5,198.4 L906.7,200.8 L906.0,203.1 L905.3,205.5 L904.7,207.9 L904.1,210.2 L903.5,212.6 L903.0,215.0 L902.5,217.4 L902.0,219.7 L901.5,222.1 L901.1,224.5 L900.7,226.8 L900.3,229.2 L900.0,231.6 L899.7,233.9 L899.4,236.3 L899.1,238.7 L898.9,241.1 L898.7,243.4 L898.5,245.8 L898.3,248.2 L898.1,250.5 L898.0,252.9 L897.8,255.3 L897.7,257.6 L897.6,260.0 L897.5,262.4 L897.4,264.8 L897.4,267.1 L897.7,269.5 L898.0,271.9 L898.5,274.2 L899.0,276.6 L899.6,279.0 L900.3,281.3 L901.1,283.7 L902.0,286.1 L903.0,288.4 L904.0,290.8 L905.2,293.2 L906.4,295.6 L907.8,297.9 L909.2,300.3 L910.7,302.7 L912.3,305.0 L914.0,307.4 L915.8,309.8 L917.7,312.2 L919.6,314.5 L921.7,316.9 L923.8,319.3 L926.1,321.6 L928.4,324.0 Z" class="cabeza corte"/>
+<rect x="891.2" y="536.4" width="165.6" height="8.4" rx="0.0" class="esp"/>
+<rect x="891.2" y="529.2" width="18.0" height="7.2" rx="0.0" class="usb"/>
+<rect x="990.8" y="544.8" width="28.8" height="48.0" rx="0.0" class="soporte"/>
+<rect x="892.4" y="544.8" width="14.4" height="48.0" rx="0.0" class="soporte"/>
+<rect x="1078.6" y="460.8" width="43.2" height="120.0" rx="0.0" class="parl"/>
+<rect x="1080.6" y="388.8" width="3.8" height="57.6" rx="0.0" class="pirpcb"/>
+<path d="M1084.4,390.0 A27.599999999999998,27.599999999999998 0 0 1 1084.4,445.2 Z" class="pir"/>
+<rect x="1078.6" y="180.0" width="2.9" height="97.2" rx="0.0" class="cam"/>
+<rect x="1081.5" y="198.7" width="22.8" height="20.2" rx="0.0" class="cam"/>
+<rect x="995.4" y="384.5" width="29.3" height="54.0" rx="0.0" class="servo"/>
+<rect x="945.2" y="400.6" width="129.6" height="7.2" rx="0.0" class="soporte"/>
+<rect x="947.6" y="360.0" width="124.8" height="9.6" rx="0.0" class="cuello"/>
+<rect x="947.6" y="336.0" width="4.8" height="24.0" rx="0.0" class="cuello"/>
+<rect x="1067.6" y="336.0" width="4.8" height="24.0" rx="0.0" class="cuello"/>
+<rect x="929.1" y="324.0" width="161.8" height="7.2" rx="0.0" class="piso"/>
+<path d="M969.2,350.4 l4.8,-3.12 l-9.6,-3.12 l9.6,-3.12 l-9.6,-3.12 l9.6,-3.12 l-4.8,-3.12" class="resorte"/>
+<path d="M1030.4,350.4 l4.8,-3.12 l-9.6,-3.12 l9.6,-3.12 l-9.6,-3.12 l9.6,-3.12 l-4.8,-3.12" class="resorte"/>
+<rect x="1003.0" y="331.2" width="13.9" height="15.6" rx="0.0" class="sw"/>
+<circle cx="1010.0" cy="352.6" r="5.8" class="sw"/>
+<rect x="999.2" y="355.9" width="21.6" height="4.1" rx="0.0" class="dedo"/>
+<rect x="1095.9" y="221.0" width="9.1" height="66.7" rx="0.0" class="oledlado"/>
+<rect x="952.4" y="549.6" width="48.0" height="7.2" rx="0.0" class="amp"/>
+<path d="M981.2,324.0 C976.4,360.0 966.8,408.0 957.2,456.0 S938.0,528.0 938.0,535.2" class="cable"/>
+<line x1="791.6" y1="127.2" x2="1010.0" y2="153.6" class="guia"/><circle cx="1010.0" cy="153.6" r="2.2" class="punto"/>
+<text x="782.0" y="124.8" class="et" text-anchor="start">cabeza: cáscara impresa (con soporte adentro)</text>
+<line x1="1228.4" y1="194.4" x2="1101.2" y2="240.0" class="guia"/><circle cx="1101.2" cy="240.0" r="2.2" class="punto"/>
+<text x="1238.0" y="192.0" class="et" text-anchor="end">OLED atornillado a la cara</text>
+<line x1="1228.4" y1="146.4" x2="1079.6" y2="187.2" class="guia"/><circle cx="1079.6" cy="187.2" r="2.2" class="punto"/>
+<text x="1238.0" y="144.0" class="et" text-anchor="end">ESP32-CAM detrás del OLED</text>
+<line x1="1228.4" y1="410.4" x2="1096.4" y2="417.6" class="guia"/><circle cx="1096.4" cy="417.6" r="2.2" class="punto"/>
+<text x="1238.0" y="408.0" class="et" text-anchor="end">PIR en el pecho</text>
+<line x1="791.6" y1="290.4" x2="1005.2" y2="352.8" class="guia"/><circle cx="1005.2" cy="352.8" r="2.2" class="punto"/>
+<text x="782.0" y="288.0" class="et" text-anchor="start">microswitch bajo el piso</text>
+<line x1="791.6" y1="314.4" x2="969.2" y2="357.6" class="guia"/><circle cx="969.2" cy="357.6" r="2.2" class="punto"/>
+<text x="782.0" y="312.0" class="et" text-anchor="start">3 resortes de lápiz + tornillos guía</text>
+<line x1="1228.4" y1="333.6" x2="1019.6" y2="357.6" class="guia"/><circle cx="1019.6" cy="357.6" r="2.2" class="punto"/>
+<text x="1238.0" y="331.2" class="et" text-anchor="end">"dedo" fijo en el disco</text>
+<line x1="1228.4" y1="357.6" x2="1070.0" y2="348.0" class="guia"/><circle cx="1070.0" cy="348.0" r="2.2" class="punto"/>
+<text x="1238.0" y="355.2" class="et" text-anchor="end">tubo = tope (2 mm de recorrido)</text>
+<line x1="1228.4" y1="386.4" x2="1029.2" y2="412.8" class="guia"/><circle cx="1029.2" cy="412.8" r="2.2" class="punto"/>
+<text x="1238.0" y="384.0" class="et" text-anchor="end">servo SG90 colgado del labio</text>
+<line x1="1228.4" y1="477.6" x2="1101.2" y2="504.0" class="guia"/><circle cx="1101.2" cy="504.0" r="2.2" class="punto"/>
+<text x="1238.0" y="475.2" class="et" text-anchor="end">parlante 50 mm contra la barriga</text>
+<line x1="791.6" y1="410.4" x2="962.0" y2="446.4" class="guia"/><circle cx="962.0" cy="446.4" r="2.2" class="punto"/>
+<text x="782.0" y="408.0" class="et" text-anchor="start">cables al ESP32 (lazo)</text>
+<line x1="791.6" y1="492.0" x2="938.0" y2="540.0" class="guia"/><circle cx="938.0" cy="540.0" r="2.2" class="punto"/>
+<text x="782.0" y="489.6" class="et" text-anchor="start">ESP32-S3 sobre la base</text>
+<line x1="791.6" y1="578.4" x2="894.8" y2="532.8" class="guia"/><circle cx="894.8" cy="532.8" r="2.2" class="punto"/>
+<text x="782.0" y="576.0" class="et" text-anchor="start">USB-C atrás (luz + programar)</text>
+<line x1="1228.4" y1="564.0" x2="976.4" y2="552.0" class="guia"/><circle cx="976.4" cy="552.0" r="2.2" class="punto"/>
+<text x="1238.0" y="561.6" class="et" text-anchor="end">amplificador (va a la derecha)</text>
+<text x="866.0" y="624.0" class="cota" text-anchor="middle">atrás</text>
+<text x="1154.0" y="624.0" class="cota" text-anchor="middle">adelante</text>
+<text x="1010.0" y="72.0" class="titulo" text-anchor="middle">CORTE LATERAL</text>
+<rect x="374.0" y="792.2" width="192.0" height="12.8" class="cuello"/>
+<rect x="374.0" y="760.2" width="6.4" height="32.0" class="cuello"/>
+<rect x="559.6" y="760.2" width="6.4" height="32.0" class="cuello"/>
+<rect x="455.6" y="786.8" width="28.8" height="5.4" class="dedo"/>
+<rect x="354.8" y="744.2" width="230.4" height="9.6" class="piso"/>
+<rect x="460.7" y="753.8" width="18.6" height="20.8" class="sw"/>
+<circle cx="470.0" cy="782.3" r="7.7" class="sw"/>
+<text x="470.0" y="823.0" class="et" text-anchor="middle">en reposo</text>
+<rect x="758.0" y="792.2" width="192.0" height="12.8" class="cuello"/>
+<rect x="758.0" y="760.2" width="6.4" height="32.0" class="cuello"/>
+<rect x="943.6" y="760.2" width="6.4" height="32.0" class="cuello"/>
+<rect x="839.6" y="786.8" width="28.8" height="5.4" class="dedo"/>
+<rect x="738.8" y="750.6" width="230.4" height="9.6" class="piso"/>
+<rect x="844.7" y="760.2" width="18.6" height="20.8" class="sw"/>
+<circle cx="854.0" cy="783.2" r="7.7" class="sw"/>
+<text x="854.0" y="823.0" class="et" text-anchor="middle">apretado</text>
+<text x="854.0" y="728.2" class="et" text-anchor="middle">el piso toca el tubo: tope firme · el switch hace clic</text>
+<path d="M854.0,696.2 v19.2" class="empuje"/>
+<text x="374.0" y="709.0" class="titulo2">Cómo funciona la cabeza-botón</text>
+</svg>
