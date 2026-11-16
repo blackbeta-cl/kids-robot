@@ -1177,9 +1177,15 @@ def _audio_en_streaming(turno):
     """Genera la cabecera WAV y, frase a frase, el audio. Libera el turno al terminar o si el cliente se va."""
     inicio, enviada = turno["inicio"], None
     primer_audio, hablado = None, []
+    t_modelo = t_voz = None      # medición: del fin del STT a la 1.ª frase del modelo; y lo que tarda en sintetizarse
     try:
         for frase in turno["frases"]:
+            ahora = time.time()
+            if t_modelo is None:
+                t_modelo = ahora - turno["t_stt"]
             hecho = _pcm_de_frase(frase)
+            if t_voz is None:
+                t_voz = time.time() - ahora
             if hecho is None:
                 continue
             pcm, frecuencia = hecho
@@ -1201,7 +1207,8 @@ def _audio_en_streaming(turno):
         t_stt = turno["t_stt"] - inicio
         if primer_audio is not None:
             print(f"🗣️ (stream) {' '.join(hablado)}\n   primer audio a los {primer_audio:.1f} s "
-                  f"(whisper {t_stt:.1f}), total {total:.1f} s, {len(hablado)} frase(s)", flush=True)
+                  f"(whisper {t_stt:.1f}, modelo/reglas hasta la 1.ª frase {t_modelo:.1f}, "
+                  f"voz de la 1.ª frase {t_voz:.1f}), total {total:.1f} s, {len(hablado)} frase(s)", flush=True)
         else:
             print(f"🗣️ (stream) sin audio ({total:.1f} s)", flush=True)
         _soltar_turno_stream()
