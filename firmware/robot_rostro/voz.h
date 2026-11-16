@@ -156,6 +156,8 @@ volatile uint32_t vozWinIt = 0;                    // veces que se evaluó la ve
 volatile uint32_t vozDisparoMs = 0, vozDisparoPico = 0;   // a los cuántos ms de acabar la guarda se oyó voz, y con qué pico
 volatile uint8_t vozWinFin = 0;                    // 0 abierta/interrumpida, 1 se acabó el tiempo, 2 se oyó voz
 
+void vozPreconectar();                             // (más abajo) abre la conexión HTTPS antes de que haga falta
+
 // Abre (o cierra) la ventana de conversación. Solo se llama después de una respuesta hablada.
 void vozAbrirVentana() {
   vozVozBloques = 0;
@@ -166,6 +168,7 @@ void vozAbrirVentana() {
   vozVentanas++;
   vozMaxPico = 0; vozMaxUmbral = 0; vozWinIt = 0; vozWinFin = 0;
   Serial.printf("Voz: te escucho %d ms (sin tocar, turno %d de %d)\n", VOZ_MS_ESPERA, vozTurnos + 1, VOZ_MAX_TURNOS);
+  vozPreconectar();                                    // la conexión TLS (~2 s) se abre mientras se espera, no cuando ya hablaste
 }
 
 // ---------- WAV ----------
@@ -843,13 +846,14 @@ void tareaVoz(void*) {
         // millis() fresco y resta con signo: "ahora" es de al inicio de la vuelta y, si en esta misma vuelta se envió y se habló
         // (unos 12 s), queda ATRÁS de vozVentanaDesde; sin signo daba un número enorme y la ventana se cerraba al instante.
         Serial.printf("Voz: nadie contestó (pico máx %ld, umbral %ld); vuelvo al reposo.\n", (long)vozMaxPico, (long)vozMaxUmbral);
+        vozSoltarConexion();                         // la conexión anticipada no se usó
         vozEsperando = false; vozTurnos = 0; vozEstado = VOZ_REPOSO; micAlPresente(); vozWinFin = 1;
       }
      }
     }
 
     // Pasados 350 ms de toque (no fue un roce) se abre la conexión TLS mientras el niño sigue hablando.
-    if (vozGrabando && !vozPreconIntentada && ahora - vozInicioToque > 350) {
+    if (vozGrabando && !vozPreconIntentada && ahora - vozInicioToque > (vozAutoGrabando ? 0 : 350)) {   // sin tocar ya se oyó una voz: no hay roce que descartar
       vozPreconIntentada = true;
       vozPreconectar();
     }

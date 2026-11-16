@@ -17,7 +17,7 @@
 #include <Preferences.h>
 #include <esp_system.h>
 
-#define FIRMWARE_VERSION "1.2.0"   // súbela a mano con cada cambio: se ve en el arranque y en /estado
+#define FIRMWARE_VERSION "1.3.0"   // súbela a mano con cada cambio: se ve en el arranque y en /estado
 
 #ifndef OTA_CLAVE
 #define OTA_CLAVE ""               // se define en wifi_config.h; sin clave, la OTA queda apagada
