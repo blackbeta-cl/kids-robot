@@ -1,7 +1,7 @@
 # Dependencias del puente de voz (voz\puente.py) para el SERVIDOR (Linux, sin micrófono ni audio).
 # Versiones probadas en Windows con Python 3.13; en Ubuntu 24.04 (Python 3.12) pueden hacer falta ajustes.
 #   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-fastapi==0.162.5
+fastapi==0.165.0
 uvicorn==0.54.0
 requests==2.34.2
 faster-whisper==1.2.1
