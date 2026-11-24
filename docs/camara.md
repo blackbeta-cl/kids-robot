@@ -1,6 +1,6 @@
 # Cámara — plan por etapas
 
-Estado: **plan**, nada implementado. La placa principal (ESP32-S3) no cambia: la cámara es un **nodo aparte**.
+Estado: **etapa 0 probada** (falta la prueba de 10 minutos); el resto es plan. La placa principal (ESP32-S3) no cambia: la cámara es un **nodo aparte**.
 
 ## Principios
 
@@ -14,12 +14,14 @@ Estado: **plan**, nada implementado. La placa principal (ESP32-S3) no cambia: la
 
 | Pieza | Notas |
 |---|---|
-| ESP32-CAM AI-Thinker (OV2640), variante USB-C con antena externa | Tiene ~4 MB de PSRAM; alcanza para detectar caras a 96×96–160×120 (QQVGA) |
+| ESP32-CAM AI-Thinker, variante USB-C con antena externa | Tiene ~4 MB de PSRAM; alcanza para detectar caras a 96×96–160×120 (QQVGA). **El sensor puede variar:** la unidad probada trae un **OV3660** (3 MP), no el OV2640 que suele anunciarse; el firmware debe detectarlo por su PID y no darlo por hecho |
+| Antena externa (IPEX) | **Obligatoria** en estas placas: el puente de 0 Ω viene hacia el conector externo, y sin antena la señal es tan débil que el stream se corta (pings con 16 % de pérdida y hasta 3,2 s). Con la antena: -48 a -62 dBm y 0 % de pérdida. La cabeza debe dejarle espacio, lejos de metal y cables |
+| Base programadora (ESP32-CAM-MB) | Solo para programar y alimentar por USB-C. Monta la placa encima haciendo coincidir 5V y GND. El chip USB-serie varía: la unidad probada trae un **FTDI FT232R** (driver VCP de FTDI; en Windows aparece con error de código 28 hasta instalarlo), no un CH340 |
 | Alimentación 5 V propia, con un condensador de 470 µF | Los picos de corriente del Wi-Fi y de la cámara reinician la placa si se alimenta desde los 3V3 del ESP32-S3. **Nunca** desde 3V3 |
 | LED indicador | Usar el LED rojo de la placa (GPIO 33, activo en bajo) o uno externo. **No usar** el flash (GPIO 4) como indicador: encandila |
 | Tapa del lente | Impresa en la cabeza o una tapita deslizable |
 
-¿Por qué no conectarla a la S3? Una OV2640 usa ~16 GPIO. La S3 ya tiene ocupados OLED, micrófono, amplificador, servo y sensor táctil, y los pines libres chocan con la lista "evitar" (35–37, 19–20, 0/3/45/46, 48). Con un nodo aparte, el firmware actual queda igual.
+¿Por qué no conectarla a la S3? Un sensor de cámara (OV2640/OV3660) usa ~16 GPIO. La S3 ya tiene ocupados OLED, micrófono, amplificador, servo y sensor táctil, y los pines libres chocan con la lista "evitar" (35–37, 19–20, 0/3/45/46, 48). Con un nodo aparte, el firmware actual queda igual.
 
 ## Etapas
 
@@ -27,9 +29,13 @@ Estado: **plan**, nada implementado. La placa principal (ESP32-S3) no cambia: la
 - Grabar el ejemplo `CameraWebServer` del core esp32 (modelo `CAMERA_MODEL_AI_THINKER`) y abrir el stream en el navegador, **solo en la red de casa**.
 - Comprobar: imagen estable a QVGA, sin reinicios al moverla y con buena señal Wi-Fi dentro de la cabeza (anotar el RSSI).
 - **Listo cuando:** 10 minutos de stream sin reinicios. Después, borrar ese firmware de ejemplo: expone video sin autenticación.
+- Placa en `arduino-cli`: `esp32:esp32:esp32cam` (partición "Huge APP" por defecto; el ejemplo ocupa ~1 MB de 3 MB). Conviene agregar al `loop()` una línea que imprima `WiFi.RSSI()` cada 2 s: un `RSSI 0` significa que se cayó el Wi-Fi.
+
+**Resultado (24-nov-2026):** funciona. Stream QVGA fluido, señal de -52 a -57 dBm, 80/80 pings con el video abierto (18 ms de media), sin reinicios. Hallazgos: el sensor es OV3660, la antena externa es imprescindible y, justo después de grabar, hubo ~30 s sin Wi-Fi que no se repitieron (el firmware propio debe reconectarse solo).
 
 ### Etapa 1 — Te sigue con la mirada
-- Firmware propio `firmware/camara/`: detección de caras a bordo (`esp-dl` / ejemplo de ESP-WHO, QQVGA, ~5 fps). El firmware **no expone stream ni ninguna ruta de imagen**.
+- Firmware propio `firmware/camara/`: detección de caras a bordo (QQVGA, ~5 fps). El firmware **no expone stream ni ninguna ruta de imagen**, y se reconecta al Wi-Fi si se cae.
+- **Decisión pendiente:** el `CameraWebServer` del core 3.x ya no trae detección de caras. Opciones: `esp-dl`/ESP-WHO como componente (ESP-IDF o Arduino como componente), un core 2.0.x solo para la cámara, o un detector más simple propio. Probar primero cuál compila y llega a ~5 fps.
 - Con una cara detectada, calcula el ángulo horizontal y le manda al robot `POST /cmd` con el texto `cabeza N` y la cabecera `x-token`. Limitar a ~3 órdenes por segundo y moverse solo si el cambio supera ~5°, para que no tiemble.
 - En el robot: mientras lleguen órdenes de la cámara, la vida en reposo **no mueve la cabeza** (si no, pelean). Se necesita una orden nueva, p. ej. `mirar N`, que marque "alguien me está mirando" durante ~3 s. Es un cambio pequeño en `robot_rostro.ino`.
 - **Listo cuando:** con alguien moviéndose frente al robot, la cabeza lo sigue sin temblar, y vuelve a la vida en reposo cuando ya no hay nadie.
@@ -57,6 +63,6 @@ Estado: **plan**, nada implementado. La placa principal (ESP32-S3) no cambia: la
 ## Riesgos y dudas abiertas
 - **Token en la LAN:** `POST /cmd` va por HTTP dentro de la casa, así que el token viaja en claro por el Wi-Fi local. Es aceptable en la red de casa, pero no en una red compartida.
 - **Calor y consumo:** la ESP32-CAM se calienta con el Wi-Fi siempre activo. Medir la temperatura dentro de la cabeza en la etapa 0.
-- **Rendimiento:** el ESP32 clásico detecta caras lento. Si no llega a ~5 fps, la alternativa es la variante con ESP32-S3 (OV3660).
-- **Luz:** la OV2640 rinde mal con poca luz; las etapas 2 y 4 deben fallar "callando", no despertando por error.
+- **Rendimiento:** el ESP32 clásico detecta caras lento. Si no llega a ~5 fps, la alternativa es una placa con ESP32-S3 (p. ej. ESP32-S3-CAM).
+- **Luz:** estos sensores rinden mal con poca luz (el OV3660 algo mejor que el OV2640); las etapas 2 y 4 deben fallar "callando", no despertando por error.
 - **Actualizaciones:** el nodo de la cámara necesitará su propia OTA firmada (por ahora, por cable).
